@@ -24,4 +24,35 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { name } = req.body
+    const user = await models.User.update({ name: name }, {
+      where: {
+        id: req.params.id
+      },
+      returning: true,
+      plain: true
+    });
+    res.json(user[1])
+  } catch (err) {
+    console.log(err)
+    res.json(err)
+  }
+});
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const user = await models.User.destroy({
+      where: {
+        id: req.params.id
+      }
+    });
+    res.json(user)
+  } catch (err) {
+    console.log(err)
+    res.json(err)
+  }
+});
+
 module.exports = router;
