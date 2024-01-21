@@ -5,7 +5,7 @@ const models = require('../models')
 /* GET users listing. */
 router.get('/', async (req, res, next) => {
   try {
-    const users = await models.User.findAll();
+    const users = await models.User.findAll({ include: models.Todo });
     res.json(users)
   } catch (err) {
     console.log(err)
@@ -55,7 +55,5 @@ router.delete('/:id', async (req, res, next) => {
     res.json(err)
   }
 });
-
-const a = 3 
 
 module.exports = router;
