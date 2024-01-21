@@ -4,7 +4,7 @@ const models = require('../models')
 
 router.get('/', async (req, res, next) => {
     try {
-        const todos = await models.Todo.findAll();
+        const todos = await models.Todo.findAll({ include: models.User });
         res.json(todos)
     } catch (err) {
         console.log(err)
