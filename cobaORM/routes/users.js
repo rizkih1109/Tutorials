@@ -43,16 +43,19 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
+    const userData = await models.User.findOne({where: {id: req.params.id}})
     const user = await models.User.destroy({
       where: {
         id: req.params.id
       }
     });
-    res.json(user)
+    res.json(userData)
   } catch (err) {
     console.log(err)
     res.json(err)
   }
 });
+
+const a = 3 
 
 module.exports = router;
