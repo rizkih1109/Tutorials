@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 const Todo = require('../models/Todo');
 const User = require('../models/User');
+const { tokenValid } = require('../helpers/util');
 
-router.get('/', async function (req, res, next) {
+
+router.get('/', tokenValid, async function (req, res, next) {
   try {
     const { title, complete, page = 1, sortBy = "_id", sortMode = 'asc' } = req.query
-    const params = {}
+    const params = {executor: req.user.userid}
     const sort = {}
     sort[sortBy] = sortMode
 
@@ -30,15 +32,16 @@ router.get('/', async function (req, res, next) {
   }
 });
 
-router.post('/', async function (req, res, next) {
+router.post('/', tokenValid, async function (req, res, next) {
   try {
-    const { title, executor } = req.body
-    const todo = await Todo.create({ title, executor })
-    const user = await User.findById(executor)
+    const { title } = req.body
+    const todo = await Todo.create({ title, executor: req.user.userid })
+    const user = await User.findById(req.user.userid)
     user.todos.push(todo)
     await user.save()
     res.json(todo)
   } catch (err) {
+    console.log(err)
     res.status(500).json({ err })
   }
 });
