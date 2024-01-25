@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Todo = require('../models/Todo');
 const User = require('../models/User');
-const { tokenValid } = require('../helpers/util');
+const { tokenValid, Response } = require('../helpers/util');
 
 
 router.get('/', tokenValid, async function (req, res, next) {
@@ -26,9 +26,9 @@ router.get('/', tokenValid, async function (req, res, next) {
     const pages = Math.ceil(total / limit)
 
     const todos = await Todo.find(params).populate('executor').sort(sort).limit(limit).skip(offset)
-    res.json({ data: todos, page, pages })
+    res.json(new Response({ todos, page, pages }))
   } catch (err) {
-    res.status(500).json({ err })
+    res.status(500).json(new Response(err.message, false))
   }
 });
 

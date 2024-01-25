@@ -4,6 +4,8 @@ var User = require('../models/User')
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const config = require('../config/config.json')
+
 
 router.post('/login', async function (req, res, next) {
   try {
@@ -15,7 +17,7 @@ router.post('/login', async function (req, res, next) {
 
     if (!bcrypt.compareSync(password, user.password)) throw Error("password is wrong")
 
-    const token = jwt.sign({ userid: user._id }, 'rubicamp');
+    const token = jwt.sign({ userid: user._id }, config.secretKey);
 
     res.json({
       succsess: true,
@@ -42,7 +44,7 @@ router.post('/register', async function (req, res, next) {
 
     const hash = bcrypt.hashSync(password, saltRounds);
     const userCreated = await User.create({ email, password: hash })
-    const token = jwt.sign({ userid: userCreated._id }, 'rubicamp');
+    const token = jwt.sign({ userid: userCreated._id }, config.secretKey);
 
     res.json({
       succsess: true,

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const User = require('../models/User')
 
+
 router.get('/', async function (req, res, next) {
   try {
     const { name, phone, page = 1, sortBy = "_id", sortMode = 'asc' } = req.query
