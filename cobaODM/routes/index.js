@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User')
 var jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const config = require('../config/config.json')
 
 
@@ -15,7 +13,7 @@ router.post('/login', async function (req, res, next) {
 
     if (!user) throw Error("user doesn't exixt")
 
-    if (!bcrypt.compareSync(password, user.password)) throw Error("password is wrong")
+    if (!user.checkPassword) throw Error("password is wrong")
 
     const token = jwt.sign({ userid: user._id }, config.secretKey);
 
@@ -42,8 +40,7 @@ router.post('/register', async function (req, res, next) {
 
     if (user) throw Error("email already exist")
 
-    const hash = bcrypt.hashSync(password, saltRounds);
-    const userCreated = await User.create({ email, password: hash })
+    const userCreated = await User.create({ email, password })
     const token = jwt.sign({ userid: userCreated._id }, config.secretKey);
 
     res.json({
