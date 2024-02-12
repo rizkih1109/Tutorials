@@ -1,28 +1,30 @@
 'use strict';
-const {sequelize} = require('../models')
+const { sequelize } = require('../models')
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const t = await sequelize.transaction();
-    return Promise.all([
-      queryInterface.addColumn('Users', 'email', {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-        unique: true
-      }, { transaction: t }),
-      queryInterface.addColumn('Users', 'password', {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false
-      }, { transaction: t })
-    ]);
+  async up(queryInterface, Sequelize) {
+    return queryInterface.sequelize.transaction((t) => {
+      return Promise.all([
+        queryInterface.addColumn('Users', 'email', {
+          allowNull: false,
+          unique: true,
+          type: Sequelize.DataTypes.STRING
+        }, { transaction: t }),
+        queryInterface.addColumn('Users', 'password', {
+          allowNull: false,
+          type: Sequelize.DataTypes.STRING
+        }, { transaction: t })
+      ]);
+    })
   },
 
-  async down (queryInterface, Sequelize) {
-    const t = await sequelize.transaction();
-    return Promise.all([
-      queryInterface.removeColumn('Users', 'email', { transaction: t }),
-      queryInterface.removeColumn('Users', 'password', { transaction: t })
-    ]);
+  async down(queryInterface, Sequelize) {
+    return queryInterface.sequelize.transaction((t) => {
+      return Promise.all([
+        queryInterface.removeColumn('Users', 'email', { transaction: t }),
+        queryInterface.removeColumn('Users', 'password', { transaction: t })
+      ]);
+    });
   }
 };
